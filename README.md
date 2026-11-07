@@ -29,7 +29,7 @@ Stage 3  合卷        提炼可复习的笔记       → reading-notes.md
 
 ## 安装
 
-### Claude Code：个人安装（推荐）
+### Claude Code：个人安装
 
 需要已安装 Claude Code、Git 和 Python 3.9+。在 macOS、Linux 或 Windows 的 WSL / Git Bash 终端执行：
 
@@ -49,13 +49,43 @@ git clone https://github.com/qinshuai2024/paper-read.git .claude/skills/paper-re
 
 也可在 GitHub 点击 **Code → Download ZIP**，解压后将包含 `SKILL.md` 的整个文件夹命名为 `paper-read`，放入对应的 skills 目录。
 
+### Codex：个人安装
+
+需要已安装 Codex、Git 和 Python 3.9+。在 macOS、Linux 或 Windows 的 WSL / Git Bash 终端执行：
+
+```bash
+mkdir -p "$HOME/.agents/skills"
+git clone https://github.com/qinshuai2024/paper-read.git "$HOME/.agents/skills/paper-read"
+```
+
+在 Codex 对话中用 `$paper-read` 调用，例如：
+
+```text
+$paper-read https://arxiv.org/abs/1706.03762
+```
+
+Codex 会自动发现新安装的 skill；如果没有显示，重启 Codex。若已有同名 skill，请先确认原安装位置并更新或备份，避免重复安装。
+
+只想在单个项目使用，可以在该项目根目录执行：
+
+```bash
+mkdir -p .agents/skills
+git clone https://github.com/qinshuai2024/paper-read.git .agents/skills/paper-read
+```
+
+也可以下载 ZIP，将包含 `SKILL.md` 的 `paper-read` 文件夹放入 `~/.agents/skills/`，或项目下的 `.agents/skills/`。安装位置与发现机制参见 [Codex 官方说明](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)。
+
 ### PDF 可选依赖
 
 **arXiv HTML 解析只使用 Python 标准库，无需 pip 依赖。** 本地 PDF 或 HTML 失败后的 PDF 回退，需要二选一：
 
 ```bash
 # 推荐：PyMuPDF，安装到运行脚本所使用的 Python 环境
+# Claude Code 安装位置
 python3 -m pip install -r "$HOME/.claude/skills/paper-read/requirements-pdf.txt"
+
+# Codex 安装位置（选择对应宿主的一条命令即可）
+python3 -m pip install -r "$HOME/.agents/skills/paper-read/requirements-pdf.txt"
 
 # 或：Poppler（macOS）
 brew install poppler
@@ -64,26 +94,32 @@ brew install poppler
 sudo apt install poppler-utils
 ```
 
-若系统 Python 不允许直接安装包，可使用虚拟环境，再在启动 Claude Code 前激活它：
+若系统 Python 不允许直接安装包，可使用虚拟环境，再在启动宿主前激活它。以下以 Claude Code 的安装目录为例；Codex 用户将 `PAPER_READ_ROOT` 改为 `$HOME/.agents/skills/paper-read`，项目安装则使用实际项目路径：
 
 ```bash
-python3 -m venv "$HOME/.claude/skills/paper-read/.venv"
-source "$HOME/.claude/skills/paper-read/.venv/bin/activate"
-python3 -m pip install -r "$HOME/.claude/skills/paper-read/requirements-pdf.txt"
+PAPER_READ_ROOT="$HOME/.claude/skills/paper-read"
+python3 -m venv "$PAPER_READ_ROOT/.venv"
+source "$PAPER_READ_ROOT/.venv/bin/activate"
+python3 -m pip install -r "$PAPER_READ_ROOT/requirements-pdf.txt"
 ```
 
 **不需要专用 API key 或额外 skill。** 外部引用查证使用宿主已有的网页搜索 / 抓取能力。Semantic Scholar、arXiv、OpenAlex、Exa 和 research-wiki 集成都是可选项，不随本仓库安装；没有联网工具时会标注无法独立查证。
 
 ### 其他兼容宿主
 
-核心资源是 `SKILL.md`、提示词、模板和 Python 脚本。支持 Agent Skills 的宿主可将整个目录放入自己的 skills 路径；Claude Code 的工具名与 `/paper-read` 命令需要按宿主能力映射。当前文档以 Claude Code 为主要使用方式；其他宿主需要自行验证交互与文件权限。
+核心资源是 `SKILL.md`、提示词、模板和 Python 脚本。支持 Agent Skills 的其他宿主可将整个目录放入自己的 skills 路径，并按宿主能力映射工具名与调用方式。Claude Code 使用 `/paper-read`，Codex 使用 `$paper-read`；完整阅读仍依赖宿主提供文件、终端、网页和交互能力。
 
 ### 更新与卸载
 
 ```bash
-# 更新；存在本地修改时先处理修改，再拉取
+# 更新 Claude Code 个人安装；存在本地修改时先处理修改，再拉取
 git -C "$HOME/.claude/skills/paper-read" pull --ff-only
+
+# 更新 Codex 个人安装
+git -C "$HOME/.agents/skills/paper-read" pull --ff-only
 ```
+
+项目安装时，将上方路径替换为项目中的 `.claude/skills/paper-read` 或 `.agents/skills/paper-read`。
 
 卸载时移走 `paper-read` skill 文件夹即可。阅读产出放在你指定的输出目录，请另行备份。
 
@@ -184,6 +220,8 @@ HTML 脚本适配 arXiv / LaTeXML 的结构，不是任意网页解析器。切�
 
 **看不到 `/paper-read`？** 确认路径是 `~/.claude/skills/paper-read/SKILL.md`，没有多套一层目录，再重新打开会话。
 
+**Codex 看不到 `$paper-read`？** 确认路径是 `~/.agents/skills/paper-read/SKILL.md`，或项目下的 `.agents/skills/paper-read/SKILL.md`，没有多套一层目录；必要时重启 Codex。
+
 **arXiv 没有 HTML 或下载失败？** 流程会尝试 PDF，再回退到摘要页或手动提供内容。网络访问受限时，可以直接给本地 PDF。
 
 **PDF 切分结果为空、缺公式或章节识别不准？** 文本抽取受双栏、字体和扫描件影响。需要回看原 PDF 的图表与公式；扫描件应先 OCR。PyMuPDF 不存在时脚本会自动尝试 `pdftotext`，但不会自动按质量切换后端。
@@ -198,9 +236,9 @@ HTML 脚本适配 arXiv / LaTeXML 的结构，不是任意网页解析器。切�
 
 Typical use involves reading English papers and discussing them in Chinese, but the workflow is not defined by the paper’s language. Its purpose is to understand the research question, methods, assumptions, and evidence, and develop an independent judgment. Translation supports that goal when useful; discussions and notes default to Chinese and can use another language on request.
 
-It accepts arXiv links / IDs and local PDFs. The arXiv HTML extractor uses only Python's standard library; PDF extraction optionally uses PyMuPDF or Poppler. Additional research skills, MCP integrations and dedicated API keys are not required. Other Agent Skills hosts may reuse the resources with tool-name and interaction adaptations; the documented primary workflow targets Claude Code.
+It accepts arXiv links / IDs and local PDFs. The arXiv HTML extractor uses only Python's standard library; PDF extraction optionally uses PyMuPDF or Poppler. Additional research skills, MCP integrations and dedicated API keys are not required. Other Agent Skills hosts may reuse the resources with tool-name and interaction adaptations.
 
-Install into `~/.claude/skills/paper-read` using the Git clone command above, reopen your session, and invoke `/paper-read <arxiv-url-or-pdf-path>`. Update with `git pull --ff-only`. Reading outputs are stored separately in the directory you choose; sync that entire directory to resume on another computer.
+For Claude Code, clone into `~/.claude/skills/paper-read` and invoke `/paper-read <arxiv-url-or-pdf-path>`. For Codex, clone into `~/.agents/skills/paper-read` and invoke `$paper-read <arxiv-url-or-pdf-path>`; project-scoped installations use `.agents/skills/paper-read`. Restart the host if the skill does not appear. Update the corresponding checkout with `git pull --ff-only`. Reading outputs are stored separately in the directory you choose; sync that entire directory to resume on another computer.
 
 ## 贡献与许可证
 
