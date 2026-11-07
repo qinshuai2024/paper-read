@@ -1,0 +1,2 @@
+# Optional: only needed for PDF extraction without Poppler.
+PyMuPDF>=1.24,<2
