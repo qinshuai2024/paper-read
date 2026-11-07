@@ -2,7 +2,9 @@
 
 **把一篇论文读透，并留下以后能复习的笔记。**
 
-一个为 Claude Code 设计的中文论文精读 skill：从“值不值得读”，到建立全局理解、逐章翻译与批判讨论，最后合卷成有来源、有证据的阅读笔记。支持 arXiv 链接和本地 PDF，支持中断后继续。
+一个帮助你深入理解学术论文的 skill，最初为 Claude Code 设计，也可在 Codex 中使用。从“值不值得读”，到建立全局理解、逐章分析与批判讨论，最后合卷成有来源、有证据的阅读笔记。支持 arXiv 链接和本地 PDF，支持中断后继续。
+
+日常使用通常以英文论文为原文，用中文讨论和记笔记；论文语言不决定它的用途。核心目标是理解研究问题、方法、假设与证据，并形成自己的判断。翻译按阅读需要提供，讨论与笔记默认中文，也可指定其他语言。
 
 [English overview](#english-overview) · [安装](#安装) · [使用](#使用) · [输出](#输出) · [常见问题](#常见问题)
 
@@ -13,13 +15,13 @@ Stage 0  分诊        为什么读？读多深？     → ReadingPlan.md
                       ↓ 确认
 Stage 1  全局导览    扩展引言，先建立框架   → deep-read.md 的 §0
                       ↓ 开始精读
-Stage 2  逐章精读    翻译、解释、质疑、证据 → deep-read.md + qa-log.md
+Stage 2  逐章精读    理解、解释、质疑、证据 → deep-read.md + qa-log.md
                       ↓ 每章可继续 / 提问 / 跳过
 Stage 3  合卷        提炼可复习的笔记       → reading-notes.md
 ```
 
 - **按目标调整深度**：先了解背景、动机和时间预算，再给出阅读建议与章节地图。
-- **分级翻译**：`SKIP` / `DIGEST` / `STANDARD` / `FULL`，重点方法与实验可以细读，熟悉的背景可以略读。
+- **按章调整阅读深度**：`SKIP` / `DIGEST` / `STANDARD` / `FULL`，重点方法与实验可以细读，熟悉的背景可以略读；翻译服务于理解。
 - **读的时候就质疑**：记录论点、证据强度、未解问题，以及审稿人与复现者视角的分析。
 - **来源可追溯**：本文内容标注章节；涉及其他论文的事实先查证，查不到就明确标注。
 - **断点续读**：`progress.json` 记录阶段、已读章节和下一步，新会话不必从头开始。
@@ -192,7 +194,9 @@ HTML 脚本适配 arXiv / LaTeXML 的结构，不是任意网页解析器。切�
 
 ## English overview
 
-**paper-read** is a Chinese-first academic paper reading skill originally built for Claude Code. It guides a conversation through triage, a global overview, section-by-section reading, and a final synthesis, with local Markdown notes and resumable progress.
+**paper-read** is a skill for understanding academic papers, originally built for Claude Code and also usable in Codex. It guides a conversation through triage, a global overview, section-by-section analysis, and a final synthesis, with local Markdown notes and resumable progress.
+
+Typical use involves reading English papers and discussing them in Chinese, but the workflow is not defined by the paper’s language. Its purpose is to understand the research question, methods, assumptions, and evidence, and develop an independent judgment. Translation supports that goal when useful; discussions and notes default to Chinese and can use another language on request.
 
 It accepts arXiv links / IDs and local PDFs. The arXiv HTML extractor uses only Python's standard library; PDF extraction optionally uses PyMuPDF or Poppler. Additional research skills, MCP integrations and dedicated API keys are not required. Other Agent Skills hosts may reuse the resources with tool-name and interaction adaptations; the documented primary workflow targets Claude Code.
 

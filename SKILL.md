@@ -1,6 +1,6 @@
 ---
 name: paper-read
-description: 精读单篇学术论文。从苏格拉底式分诊（值不值得读）→ 扩展引言式全局导览 → 逐章中文翻译+资深解读+批判性反问 → 合卷产出阅读笔记。适用于 arXiv 链接或本地 PDF。当用户说"精读这篇"、"帮我读这篇论文"、"read this paper"、"读论文"、"arxiv 链接 + 想精读"时触发。
+description: 深入理解单篇学术论文：阅读分诊、全局导览、逐章分析、批判问答与证据追溯，最终形成可复习的阅读笔记。常用于英文论文，讨论与笔记默认中文，也可按用户要求使用其他语言。适用于 arXiv 链接或本地 PDF；当用户要求精读论文、理解方法或讨论论文时使用。
 license: MIT
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, AskUserQuestion
 ---
@@ -20,6 +20,8 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, AskUser
 
 
 ## 设计哲学
+
+目标是理解论文的研究问题、方法、假设与证据，并帮助读者形成自己的判断。常见输入是英文论文，讨论和笔记默认中文；原文语言与讲解语言分别处理，不把精读限定为阅读某种语言的论文。翻译服务于理解，不能用逐句翻译代替解释与分析。
 
 吃透一篇论文的本质是 **对话与质疑**，而不是被动接受。资深科研者读论文有三个习惯，本 skill 完全围绕它们设计：
 
@@ -105,7 +107,7 @@ ARS 是**写作驱动**的批量科研流水线 (research → write → review �
   - `<MM-DD>` 是**首次创建该论文文件夹当天**的月-日 (两位补零), 取自 `TZ=Asia/Shanghai date "+%m-%d"`。
   - **此前缀在整个精读生命周期内固定不变** —— 跨天续读 / 重读 / 合卷都沿用首次创建时记下的日期, 绝不按"今天"重算 (否则断点续读会找不到旧目录)。日期前缀记录在 `progress.json` 的 `dated_slug` 字段, 是 source of truth。
   - 全流程中凡出现 `papers/<slug>/` 或 `reading-notes/<slug>.md` 的占位符, **一律替换为** `papers/<dated-slug>/` 与 `reading-notes/<dated-slug>.md`。
-- **TRANSLATION_LEVEL** — 翻译详尽度，默认 **HIGH**（全文完整中文翻译）。可由 ReadingPlan 调整。
+- **TRANSLATION_LEVEL** — 按 ReadingPlan 的章节策略决定翻译详尽度（`SKIP` / `DIGEST` / `STANDARD` / `FULL`），默认 `STANDARD`；完整翻译仅在相应章节选用 `FULL` 时提供。输出语言默认中文，可按用户要求调整。
 - **PAUSE_POLICY** — 章末**三选项暂停**: `[继续 / 提问 / 跳过本章下一章]`。永远不自动连读。
 - **QUICK_MODE** — 通过 `--quick` 跳过 Stage 0，直接进入 Stage 1。
 
